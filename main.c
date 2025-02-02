@@ -43,7 +43,7 @@ int main(void)
 
   queue_init(&keysend_queue, sizeof(keysend_task_t), 8);
 
-  for (uint8_t i=0; i < 5; i++) {
+  for (uint8_t i=0; i < 2; i++) {
     gpio_init(i+GPIO_OFFSET);
     gpio_set_dir(i+GPIO_OFFSET, GPIO_OUT);
     printf("Initializing GPIO %d\n", i+GPIO_OFFSET);
@@ -96,8 +96,8 @@ void tud_resume_cb(void)
 // USB HID
 //--------------------------------------------------------------------+
 
-bool btnstate[5] = { false };
-bool prevbtnstate[5] = { false };
+bool btnstate[2] = { false };
+bool prevbtnstate[2] = { false };
 
 void hid_task(void)
 {
@@ -110,90 +110,32 @@ void hid_task(void)
 
   bool btn = false;
 
-  for (uint8_t i=0; i < 5; i++) {
+  for (uint8_t i=0; i < 2; i++) {
     btnstate[i] = gpio_get(i+GPIO_OFFSET);
     if (btnstate[i]) btn = true;
-    /*if (btn) printf("Got Button State\n");*/
   }
-    if (btnstate[0]) {
-      printf("BTN 0 MOD Down\n");
 
-      // Audio Follows
-      if(btnstate[1] && !prevbtnstate[1]){
-        keysend_task_t keycode_item = { .keycode = { 0 } };
-        keycode_item.keycode[0] = HID_KEY_SCROLL_LOCK;
-        queue_try_add(&keysend_queue, &keycode_item);
-        queue_try_add(&keysend_queue, &keycode_item);
-        keycode_item.keycode[0] = HID_KEY_F5;
-        queue_try_add(&keysend_queue, &keycode_item);
-      }
-      // Audio Current
-      if(btnstate[2] && !prevbtnstate[2]){
-        keysend_task_t keycode_item = { .keycode = { 0 } };
-        keycode_item.keycode[0] = HID_KEY_SCROLL_LOCK;
-        queue_try_add(&keysend_queue, &keycode_item);
-        queue_try_add(&keysend_queue, &keycode_item);
-        keycode_item.keycode[0] = HID_KEY_A;
-        queue_try_add(&keysend_queue, &keycode_item);
-      }
-      // USB Follows
-      if(btnstate[3] && !prevbtnstate[3]){
-        keysend_task_t keycode_item = { .keycode = { 0 } };
-        keycode_item.keycode[0] = HID_KEY_SCROLL_LOCK;
-        queue_try_add(&keysend_queue, &keycode_item);
-        queue_try_add(&keysend_queue, &keycode_item);
-        keycode_item.keycode[0] = HID_KEY_F7;
-        queue_try_add(&keysend_queue, &keycode_item);
-      }
-      // USB Current
-      if(btnstate[4] && !prevbtnstate[4]){
-        keysend_task_t keycode_item = { .keycode = { 0 } };
-        keycode_item.keycode[0] = HID_KEY_SCROLL_LOCK;
-        queue_try_add(&keysend_queue, &keycode_item);
-        queue_try_add(&keysend_queue, &keycode_item);
-        keycode_item.keycode[0] = HID_KEY_U;
-        queue_try_add(&keysend_queue, &keycode_item);
-      }
-    } else {
-      // normal switching.
-      // Switch to head 1
-      if(btnstate[1] && !prevbtnstate[1]){
-        keysend_task_t keycode_item = { .keycode = { 0 } };
-        keycode_item.keycode[0] = HID_KEY_SCROLL_LOCK;
-        queue_try_add(&keysend_queue, &keycode_item);
-        queue_try_add(&keysend_queue, &keycode_item);
-        keycode_item.keycode[0] = HID_KEY_1;
-        queue_try_add(&keysend_queue, &keycode_item);
-      }
-      // Switch to head 2
-      if(btnstate[2] && !prevbtnstate[2]){
-        keysend_task_t keycode_item = { .keycode = { 0 } };
-        keycode_item.keycode[0] = HID_KEY_SCROLL_LOCK;
-        queue_try_add(&keysend_queue, &keycode_item);
-        queue_try_add(&keysend_queue, &keycode_item);
-        keycode_item.keycode[0] = HID_KEY_2;
-        queue_try_add(&keysend_queue, &keycode_item);
-      }
-      // Switch to head 3
-      if(btnstate[3] && !prevbtnstate[3]){
-        keysend_task_t keycode_item = { .keycode = { 0 } };
-        keycode_item.keycode[0] = HID_KEY_SCROLL_LOCK;
-        queue_try_add(&keysend_queue, &keycode_item);
-        queue_try_add(&keysend_queue, &keycode_item);
-        keycode_item.keycode[0] = HID_KEY_3;
-        queue_try_add(&keysend_queue, &keycode_item);
-      }
-      // Switch to head 4
-      if(btnstate[4] && !prevbtnstate[4]){
-        keysend_task_t keycode_item = { .keycode = { 0 } };
-        keycode_item.keycode[0] = HID_KEY_SCROLL_LOCK;
-        queue_try_add(&keysend_queue, &keycode_item);
-        queue_try_add(&keysend_queue, &keycode_item);
-        keycode_item.keycode[0] = HID_KEY_4;
-        queue_try_add(&keysend_queue, &keycode_item);
-      }
-    }
-  for (int i=0;i<5; i++){
+  // normal switching.
+  // Switch to head 1
+  if(btnstate[0] && !prevbtnstate[0]){
+    keysend_task_t keycode_item = { .keycode = { 0 } };
+    keycode_item.keycode[0] = HID_KEY_SCROLL_LOCK;
+    queue_try_add(&keysend_queue, &keycode_item);
+    queue_try_add(&keysend_queue, &keycode_item);
+    keycode_item.keycode[0] = HID_KEY_1;
+    queue_try_add(&keysend_queue, &keycode_item);
+  }
+  // Switch to head 2
+  if(btnstate[1] && !prevbtnstate[1]){
+    keysend_task_t keycode_item = { .keycode = { 0 } };
+    keycode_item.keycode[0] = HID_KEY_SCROLL_LOCK;
+    queue_try_add(&keysend_queue, &keycode_item);
+    queue_try_add(&keysend_queue, &keycode_item);
+    keycode_item.keycode[0] = HID_KEY_2;
+    queue_try_add(&keysend_queue, &keycode_item);
+  }
+
+  for (int i=0;i<2; i++){
     prevbtnstate[i] = btnstate[i];
   }
 }
